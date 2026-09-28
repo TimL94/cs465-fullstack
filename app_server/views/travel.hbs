@@ -14,11 +14,11 @@
 				<div class="box">
 					<div>
 						<div class="body">
-							<h1>Travel</h1>
+							<h1>Travel Getaways</h1>
 							<ul id="sites">
 			{{#each trips}}
 								<li>			
-									<a href="travel.html"><img src=/{{this.image}} alt="Img"></a>
+									<a href="/api/trips/{{this.code}}"><img src=/{{this.image}} alt="Img"></a>
 									<h2><a href="travel.html">{{this.name}}</a></h2>
 									<p>
 										{{{this.description}}}
