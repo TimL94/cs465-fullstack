@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { TripData } from '../services/trip-data';
 import {  Router } from '@angular/router';
+import { AuthenticationService } from '../services/authentication';
 
 @Component({
   selector: 'app-add-trip',
@@ -17,7 +18,8 @@ export class AddTrip implements OnInit {
 constructor(
   private formBuilder: FormBuilder,
   private router: Router,
-  private tripService: TripData
+  private tripService: TripData,
+  private authenticationService: AuthenticationService
 ) { }
 ngOnInit() {
   this.addForm = this.formBuilder.group({
@@ -48,4 +50,6 @@ public onSubmit() {
   }
   // get the form short name to access the form fields
   get f() { return this.addForm.controls; }
+
+  
 }
