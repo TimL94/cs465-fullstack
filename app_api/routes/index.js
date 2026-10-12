@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('express-jwt');
+const jwt = require('jsonwebtoken'); // Enable JSON Web Tokens
+
+const ctrlTrips = require('../controllers/trips');
+
+const tripsController = require('../controllers/trips');
+const authController = require('../controllers/authentication');
 
 // Method to authenticate our JWT
 function authenticateJWT(req, res, next) {
     // console.log('In Middleware');
     const authHeader = req.headers['authorization'];
-    // console.log('Auth Header: ' + authHeader);
 
+    // console.log('Auth Header: ' + authHeader);
     if (authHeader == null) {
         console.log('Auth Header Required but NOT PRESENT!');
         return res.sendStatus(401);
@@ -21,8 +26,8 @@ function authenticateJWT(req, res, next) {
     }
 
     const token = authHeader.split(' ')[1];
-    // console.log('Token: ' + token);
 
+    // console.log('Token: ' + token);
     if (token == null) {
         console.log('Null Bearer Token');
         return res.sendStatus(401);
@@ -30,30 +35,39 @@ function authenticateJWT(req, res, next) {
 
     // console.log(process.env.JWT_SECRET);
     // console.log(jwt.decode(token));
-    const verified = jwt.verify(token, process.env.JWT_SECRET, (err, verified) => {
-        if (err) {
-            return res.sendStatus(401).json('Token Validation Error!');
-        }
+    const verified = jwt.verify(
+        token,
+        process.env.JWT_SECRET,
+        (err, verified) => {
+            if (err) {
+                return res.sendStatus(401).json('Token Validation Error!');
+            }
 
-        req.auth = verified; // Set the auth paramto the decoded object
-    });
+            req.auth = verified; // Set the auth paramto the decoded object
+        }
+    );
 
     next(); // We need to continue or this will hang forever
 }
 
+// define route for login endpoint
+router
+    .route('/login')
+    .post(authController.login);
 
-const tripsController = require('../controllers/trips');
-const authController = require('../controllers/authentication');
+// define route for registration endpoint
+router
+    .route('/register')
+    .post(authController.register);
 
-router.route('/register').post(authController.register);
-router.route('/login').post(authController.login);
-
-
+// define route for our trips endpoint
 router
     .route('/trips')
     .get(tripsController.tripsList)
     .post(authenticateJWT, tripsController.tripsAddTrip);
 
+// GET Method routes tripsFindByCode - requires parameter
+// PUT Method routes tripsUpdateTrip - requires parameter
 router
     .route('/trips/:tripCode')
     .get(tripsController.tripsFindByCode)
