@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken'); // Enable JSON Web Tokens
 
-const ctrlTrips = require('../controllers/trips');
-
 const tripsController = require('../controllers/trips');
 const authController = require('../controllers/authentication');
 
@@ -43,7 +41,7 @@ function authenticateJWT(req, res, next) {
                 return res.sendStatus(401).json('Token Validation Error!');
             }
 
-            req.auth = verified; // Set the auth paramto the decoded object
+            req.auth = verified; // Set the auth parameter to the decoded object
         }
     );
 
@@ -71,6 +69,7 @@ router
 router
     .route('/trips/:tripCode')
     .get(tripsController.tripsFindByCode)
-    .put(authenticateJWT, tripsController.tripsUpdateTrip);
+    .put(authenticateJWT, tripsController.tripsUpdateTrip)
+    .delete(authenticateJWT, tripsController.tripsDeleteTrip);
 
 module.exports = router;
